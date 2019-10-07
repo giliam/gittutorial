@@ -10,7 +10,6 @@
 
 NORMALIZE = ../flotpython-tools/tools/nbnorm.py
 NORMALIZE_OPTIONS = --author "Thierry Parmentelat" --logo-path ../media/inria-25-alpha.png --rise
-LICENCE_STRIP = ../tools/nbstriplicense.py
 
 
 NOTEBOOKS := $(shell git ls-files *.ipynb)
@@ -19,6 +18,14 @@ all:: norm
 
 norm:
 	$(NORMALIZE) $(NORMALIZE_OPTIONS) $(NOTEBOOKS)
+
+all:: shell
+
+SHELLS = $(foreach nb,$(subst .ipynb,.sh,$(NOTEBOOKS)),../scripts/$(nb))
+shell: $(SHELLS)
+
+../scripts/%.sh: %.ipynb
+	jupyter nbconvert --to script $* && mv -f $*.sh ../scripts && chmod +x ../scripts/$*.sh
 
 #########################################################################
 # publication
@@ -48,8 +55,3 @@ view-sphinx:
 
 clean:
 	rm -rf _build
-
-# manually run nbpublish on one notebook for debugging
-# WARNING: this does not always seem to output the expected .rst in converted/ 
-convert:
-	for notebook in $(NOTEBOOKS); do PYTHONPATH=. nbpublish -ep . -f sphinx_ipypublish_all.ext.custom $$notebook; done

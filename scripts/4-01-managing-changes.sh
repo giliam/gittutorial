@@ -11,15 +11,15 @@ reset=""
 
 if [ -n "$reset" ]; then 
     cd $TOP
-    bash $SCRIPTS/2-06-my-first-remote.sh
+    bash $SCRIPTS/3-01-my-first-remote.sh
 fi >& /dev/null
 
-# si nécessaire, on se place dans le repo git
+# si nécessaire, on se place dans le dépôt git
 [ -d repo-alice ] && cd repo-alice
 
 pwd
 
-# nous sommes dans 'repo-alice' qui a 5 commits
+# nous sommes dans 'repo-alice' qui a 4 commits
 
 git l
 
@@ -30,22 +30,12 @@ git l
 
 git status
 
-# juste pour alléger l'affichage, on se crée un commit
-# avec un libellé plus court
-git commit --allow-empty --message="modifications pendantes"
-
 # de très nombreuses options disponibles
 # sans --all
 git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
 
 # avec --all
 git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
-
-# le contenu d'un commit
-git ls-tree --abbrev HEAD
-
-# un autre commit
-git ls-tree --abbrev master
 
 # git status donne une synthèse
 
@@ -84,7 +74,7 @@ git diff --cached
 # un raccourci pour bien montrer 
 # LES DEUX différences:
 # fichiers / index 
-# et
+#   ET
 # index / commit
 
 type show-diffs
@@ -102,6 +92,10 @@ git status
 show-diffs
 
 git reset --hard
+
+# refait les deux changements 
+# qu'on avait fait ci-dessus
+
 $SCRIPTS/do both-kinds-of-changes
 
 show-diffs
@@ -138,3 +132,42 @@ git reset -- README.md
 git checkout -- README.md
 
 show-diffs
+
+# remettons nous dans re-alice
+# la liste des fichiers dans le dernier commit
+
+cd $TOP/repo-alice
+git ls-files
+
+# notre dépôt est propre
+
+git status
+
+# on crée un fichier à ignorer
+touch un-fichier
+
+# listons tous les fichiers
+# pour vérifier l'existence de ce 
+# nouveau fichier
+ls 
+
+# git status nous signale que le fichier
+# pourrait être ajouté
+git status
+
+# on crée le fichier . gitignore avec 
+# une seule ligne qui contient 'un-fichier'
+echo "un-fichier" > .gitignore
+
+# maintenant git status ignore un-fichier
+git status
+
+# du coup maintenant on voit .gitignore, parce qu'il n'est pas dans le dépôt
+# on peut soit l'ajouter, ou alors ... l'ignorer
+
+# on ajoute dans .gitignore une deuxième ligne qui contient 
+# .gitignore
+
+echo ".gitignore" >> .gitignore
+
+git status
